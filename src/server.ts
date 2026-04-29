@@ -4,6 +4,10 @@ import { connectDB } from './config/db'
 import { clerkMiddleware } from '@clerk/express'
 import adminRouter from './routes/adminRouter'
 import { checkAdminAccess } from './middlewares/authMiddleware'
+import clientRoutes from './routes/clientRoutes';
+import serviceRoutes from './routes/serviceRoutes';
+import serviceRecordRoutes from './routes/serviceRecordRoutes';
+
 
 if (process.env.NODE_ENV !== 'production') {
     process.loadEnvFile()
@@ -22,5 +26,8 @@ app.get('/api', (req, res) => {
     res.send('Hello World!')
 })
 app.use('/api/admin', checkAdminAccess, adminRouter)
+app.use('/api/clientes', clientRoutes);
+app.use('/api/servicios', serviceRoutes);
+app.use('/api/registros', serviceRecordRoutes);
 
 export default app

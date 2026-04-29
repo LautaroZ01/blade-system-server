@@ -1,19 +1,23 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-export interface IService extends Document {
-    name: string;
-    defaultTouchupDays?: number;
+export interface IClient extends Document {
+    firstName: string;
+    lastName: string;
+    phone?: string;
+    medicalNotes?: string;
     isActive: boolean;
     createdAt: Date;
     updatedAt: Date;
 }
 
-const ServiceSchema: Schema = new Schema({
-    name: { type: String, required: true, trim: true }, // Ej: 'Color + Corte', 'Tratamiento'
-    defaultTouchupDays: { type: Number }, // Días sugeridos para calcular automáticamente el próximo retoque
-    isActive: { type: Boolean, default: true }
+const ClientSchema: Schema = new Schema({
+    firstName: { type: String, required: true, trim: true },
+    lastName: { type: String, required: true, trim: true },
+    phone: { type: String, trim: true },
+    medicalNotes: { type: String, trim: true }, // Ej: "Alérgica a la PPD"
+    isActive: { type: Boolean, default: true } // Para no borrar el historial si deja de asistir
 }, {
     timestamps: true
 });
 
-export const Service = mongoose.model<IService>('Service', ServiceSchema);
+export const Client = mongoose.model<IClient>('Client', ClientSchema);

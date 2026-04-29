@@ -14,6 +14,7 @@
     "@clerk/express": "^2.1.9",
     "cors": "^2.8.6",
     "express": "^5.2.1",
+    "express-validator": "^7.3.2",
     "mongoose": "^9.6.0"
   },
   "devDependencies": {

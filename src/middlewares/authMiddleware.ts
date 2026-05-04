@@ -16,8 +16,6 @@ export const checkAdminAccess = async (req: Request, res: Response, next: NextFu
         // Usamos getAuth() como indica la nueva documentación
         const { userId } = getAuth(req);
 
-        console.log(getAuth(req));
-
         if (!userId) {
             return res.status(401).json({ error: 'Usuario no autenticado en Clerk' });
         }

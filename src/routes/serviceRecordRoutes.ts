@@ -6,7 +6,8 @@ import {
     getClientRecords,
     getUpcomingTouchups,
     updateServiceRecord,
-    deleteServiceRecord
+    deleteServiceRecord,
+    getRecentRecords
 } from '../controllers/serviceRecordController';
 
 const router: Router = Router();
@@ -21,7 +22,7 @@ const validateRequest = (req: Request, res: Response, next: NextFunction) => {
 };
 
 // Proteger todas las rutas con el middleware de admin
-// router.use(checkAdminAccess);
+router.use(checkAdminAccess);
 
 // ==========================================
 // Rutas Específicas (Deben ir antes de las dinámicas como /:id)
@@ -29,6 +30,7 @@ const validateRequest = (req: Request, res: Response, next: NextFunction) => {
 
 // 3. Read - Próximos Retoques / Dashboard (GET /api/registros/retoques)
 router.get('/retoques', getUpcomingTouchups);
+router.get('/recientes', getRecentRecords);
 
 // 2. Read - Historial por Cliente (GET /api/registros/cliente/:clientId)
 router.get(

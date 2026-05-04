@@ -21,7 +21,7 @@ const validateRequest = (req: Request, res: Response, next: NextFunction) => {
 };
 
 // Proteger todas las rutas de clientes con el middleware de admin
-// router.use(checkAdminAccess);
+router.use(checkAdminAccess);
 
 // 1. Create (POST /api/clientes)
 router.post(

@@ -12,7 +12,7 @@ export const createServiceRecord = async (req: Request, res: Response) => {
         // LÓGICA CLAVE: Si no hay nextTouchupDate, lo calculamos basado en el Service
         if (!finalNextTouchupDate) {
             const foundService = await Service.findById(service);
-            
+
             if (foundService && foundService.defaultTouchupDays && foundService.defaultTouchupDays > 0) {
                 // Instanciamos la fecha del servicio y le sumamos los días por defecto
                 const date = new Date(serviceDate);
@@ -32,7 +32,7 @@ export const createServiceRecord = async (req: Request, res: Response) => {
         });
 
         const savedRecord = await newRecord.save();
-        
+
         return res.status(201).json(savedRecord);
     } catch (error) {
         console.error('Error al crear el registro de servicio:', error);
@@ -60,7 +60,7 @@ export const getClientRecords = async (req: Request, res: Response) => {
 export const getUpcomingTouchups = async (req: Request, res: Response) => {
     try {
         // Buscamos los que están pendientes. También nos aseguramos de que tengan una fecha programada.
-        const records = await ServiceRecord.find({ 
+        const records = await ServiceRecord.find({
             touchupStatus: 'pending',
             nextTouchupDate: { $ne: null }
         })
@@ -110,12 +110,29 @@ export const deleteServiceRecord = async (req: Request, res: Response) => {
             return res.status(404).json({ error: 'Registro no encontrado' });
         }
 
-        return res.status(200).json({ 
-            message: 'Registro eliminado físicamente de forma exitosa', 
-            record: deletedRecord 
+        return res.status(200).json({
+            message: 'Registro eliminado físicamente de forma exitosa',
+            record: deletedRecord
         });
     } catch (error) {
         console.error('Error al eliminar el registro:', error);
         return res.status(500).json({ error: 'Error interno del servidor al eliminar el registro' });
+    }
+};
+
+// Read - Últimos Movimientos (GET /api/registros/recientes)
+export const getRecentRecords = async (req: Request, res: Response) => {
+    try {
+        // Traemos los últimos 10 servicios registrados, sin importar el estado del retoque
+        const records = await ServiceRecord.find()
+            .populate('client', 'firstName lastName')
+            .populate('service', 'name')
+            .sort({ createdAt: -1 }) // Los creados más recientemente primero
+            .limit(10);
+
+        return res.status(200).json(records);
+    } catch (error) {
+        console.error('Error al obtener movimientos recientes:', error);
+        return res.status(500).json({ error: 'Error interno del servidor' });
     }
 };

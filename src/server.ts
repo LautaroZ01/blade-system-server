@@ -7,6 +7,7 @@ import { checkAdminAccess } from './middlewares/authMiddleware'
 import clientRoutes from './routes/clientRoutes';
 import serviceRoutes from './routes/serviceRoutes';
 import serviceRecordRoutes from './routes/serviceRecordRoutes';
+import dashboardRoutes from './routes/dashboardRoutes';
 
 
 if (process.env.NODE_ENV !== 'production') {
@@ -29,5 +30,6 @@ app.use('/api/admin', checkAdminAccess, adminRouter)
 app.use('/api/clientes', clientRoutes);
 app.use('/api/servicios', serviceRoutes);
 app.use('/api/registros', serviceRecordRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 export default app

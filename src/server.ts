@@ -19,7 +19,7 @@ connectDB()
 const app: Express = express()
 
 app.use(cors({
-    origin: ['https://tu-frontend.vercel.app', 'http://localhost:5173'],
+    origin: ['https://blade-system-client.vercel.app', 'http://localhost:5173'],
     credentials: true
 }));
 app.use(express.json())

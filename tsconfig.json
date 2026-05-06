@@ -6,12 +6,16 @@
             "esnext"
         ],
         "target": "ESNext",
-        "moduleResolution": "NodeNext",
-        "module": "NodeNext",
+        "moduleResolution": "node",
+        "module": "CommonJS",
         "strict": true,
         "sourceMap": true,
         "esModuleInterop": true,
-        "declaration": true
+        "declaration": true,
+        "skipLibCheck": true,
+        "types": [
+            "node"
+        ]
     },
     "include": [
         "src/**/*.ts"

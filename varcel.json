@@ -1,0 +1,11 @@
+{
+  "api": {
+    "bodyParser": false
+  },
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.js"
+    }
+  ]
+}

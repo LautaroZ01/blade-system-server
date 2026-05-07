@@ -1,11 +1,17 @@
 {
+  "builds": [
+    {
+      "src": "src/server.ts",
+      "use": "@vercel/node"
+    }
+  ],
   "api": {
     "bodyParser": false
   },
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/server.ts"
+      "destination": "/src/server.ts"
     }
   ]
 }

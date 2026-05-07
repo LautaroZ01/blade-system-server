@@ -23,14 +23,14 @@ app.use(cors({
     credentials: true
 }));
 
-app.use((req, res, next) => {
-    if (req.body && typeof req.body === 'object' && Object.keys(req.body).length > 0) {
-        next();
-    } else {
-        express.json({ limit: '10mb' })(req, res, next);
-    }
-});
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+//app.use((req, res, next) => {
+//    if (req.body && typeof req.body === 'object' && Object.keys(req.body).length > 0) {
+//        next();
+//    } else {
+//        express.json({ limit: '10mb' })(req, res, next);
+//    }
+//});
+//app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 app.use(clerkMiddleware())
 

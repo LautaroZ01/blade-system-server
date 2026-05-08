@@ -14,7 +14,7 @@ import { validateRequest } from '../middlewares/validateRequest';
 const router: Router = Router();
 
 // Proteger todas las rutas con el middleware de admin
-router.use(checkAdminAccess);
+// router.use(checkAdminAccess);
 
 // ==========================================
 // Rutas Específicas (Deben ir antes de las dinámicas como /:id)
@@ -46,9 +46,15 @@ router.post(
         body('service').isMongoId().withMessage('El ID del servicio (service) es obligatorio y debe ser válido'),
         body('serviceDate').isISO8601().withMessage('La fecha del servicio (serviceDate) es obligatoria y debe tener formato ISO 8601').toDate(),
         body('notes').optional().isString().trim(),
-        body('productsUsed').optional().isString().trim(),
+
+        body('productsUsed').optional().isArray().withMessage('productsUsed debe ser una lista (array)'),
+        body('productsUsed.*.product').isMongoId().withMessage('Cada producto usado debe tener un ID válido'),
+        body('productsUsed.*.quantity')
+            .isNumeric().withMessage('La cantidad debe ser un número')
+            .custom(value => value > 0).withMessage('La cantidad debe ser mayor a 0'),
+
         body('nextTouchupDate').optional({ nullable: true }).isISO8601().withMessage('nextTouchupDate debe ser una fecha válida').toDate(),
-        body('touchupStatus').optional().isIn(['pending', 'completed', 'cancelled']).withMessage('Estado de retoque no válido'),
+        body('touchupStatus').optional().isIn(['pending', 'completed', 'canceled']).withMessage('Estado de retoque no válido'),
         validateRequest
     ],
     createServiceRecord

@@ -1,42 +1,63 @@
 import { Request, Response } from 'express';
 import { ServiceRecord } from '../models/ServiceRecord';
 import { Service } from '../models/Service';
+import { Product } from '../models/Product';
 
 // 1. Create (POST /api/registros)
 export const createServiceRecord = async (req: Request, res: Response) => {
     try {
-        const { client, service, serviceDate, notes, productsUsed, nextTouchupDate, touchupStatus } = req.body;
+        const { client, service, serviceDate, notes, productsUsed, nextTouchupDate } = req.body;
 
+        // 1. Lógica de fecha de retoque (la que ya tenías)
         let finalNextTouchupDate = nextTouchupDate;
-
-        // LÓGICA CLAVE: Si no hay nextTouchupDate, lo calculamos basado en el Service
         if (!finalNextTouchupDate) {
             const foundService = await Service.findById(service);
-
             if (foundService && foundService.defaultTouchupDays && foundService.defaultTouchupDays > 0) {
-                // Instanciamos la fecha del servicio y le sumamos los días por defecto
                 const date = new Date(serviceDate);
                 date.setDate(date.getDate() + foundService.defaultTouchupDays);
                 finalNextTouchupDate = date;
             }
         }
 
+        // 2. LÓGICA DE DESCUENTO DE STOCK
+        // Si el usuario envió productos, los procesamos uno por uno
+        if (productsUsed && Array.isArray(productsUsed) && productsUsed.length > 0) {
+            for (const item of productsUsed) {
+                const product = await Product.findById(item.product);
+
+                if (!product) {
+                    return res.status(404).json({ error: `Producto con ID ${item.product} no encontrado` });
+                }
+
+                if (product.stock < item.quantity) {
+                    return res.status(400).json({
+                        error: `Stock insuficiente para ${product.name}. Disponible: ${product.stock}, Requerido: ${item.quantity}`
+                    });
+                }
+
+                // Descontamos el stock
+                product.stock -= item.quantity;
+                await product.save();
+            }
+        }
+
+        // 3. Crear el registro con la nueva estructura de productos
         const newRecord = new ServiceRecord({
             client,
             service,
             serviceDate,
             notes,
-            productsUsed,
+            productsUsed, // Ahora es un array [{product, quantity}, ...]
             nextTouchupDate: finalNextTouchupDate,
-            touchupStatus: touchupStatus || 'pending'
+            touchupStatus: 'pending'
         });
 
         const savedRecord = await newRecord.save();
-
         return res.status(201).json(savedRecord);
+
     } catch (error) {
-        console.error('Error al crear el registro de servicio:', error);
-        return res.status(500).json({ error: 'Error interno del servidor al crear el registro' });
+        console.error('Error al crear el registro:', error);
+        return res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
 

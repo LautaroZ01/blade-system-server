@@ -1,11 +1,16 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
 
+interface IUsedProduct {
+    product: Types.ObjectId;
+    quantity: number; // Por ejemplo: gramos, ml o unidades
+}
+
 export interface IServiceRecord extends Document {
     client: Types.ObjectId;
     service: Types.ObjectId;
     serviceDate: Date;
     notes?: string;
-    productsUsed?: string; // Modificado: Ahora es texto libre (Ej: "Wella Blondor, Olaplex N°2")
+    productsUsed: IUsedProduct[];
     nextTouchupDate?: Date;
     touchupStatus: 'pending' | 'completed' | 'cancelled';
     createdAt: Date;
@@ -18,7 +23,10 @@ const ServiceRecordSchema: Schema = new Schema({
     serviceDate: { type: Date, required: true, index: true },
 
     notes: { type: String, trim: true }, // Ej: "Balayage rubio miel, corte en capas"
-    productsUsed: { type: String, trim: true }, // Texto ingresado por el admin
+    productsUsed: [{
+        product: { type: Schema.Types.ObjectId, ref: 'Product', required: true },
+        quantity: { type: Number, required: true, min: 0 }
+    }],
 
     // Lógica del Dashboard ("Próximos retoques")
     nextTouchupDate: { type: Date, index: true },

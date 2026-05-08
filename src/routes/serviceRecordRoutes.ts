@@ -9,17 +9,9 @@ import {
     deleteServiceRecord,
     getRecentRecords
 } from '../controllers/serviceRecordController';
+import { validateRequest } from '../middlewares/validateRequest';
 
 const router: Router = Router();
-
-// Middleware para manejar los errores de express-validator
-const validateRequest = (req: Request, res: Response, next: NextFunction) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-    next();
-};
 
 // Proteger todas las rutas con el middleware de admin
 router.use(checkAdminAccess);

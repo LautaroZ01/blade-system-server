@@ -8,17 +8,9 @@ import {
     updateService,
     deleteService
 } from '../controllers/serviceController';
+import { validateRequest } from '../middlewares/validateRequest';
 
 const router: Router = Router();
-
-// Middleware para manejar los errores de validación de express-validator
-const validateRequest = (req: Request, res: Response, next: NextFunction) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
-    }
-    next();
-};
 
 // Proteger todas las rutas de servicios con el middleware de admin
 router.use(checkAdminAccess);

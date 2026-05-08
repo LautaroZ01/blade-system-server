@@ -6,6 +6,7 @@ import adminRouter from './routes/adminRouter'
 import { checkAdminAccess } from './middlewares/authMiddleware'
 import clientRoutes from './routes/clientRoutes';
 import serviceRoutes from './routes/serviceRoutes';
+import productRoutes from './routes/productRoutes';
 import serviceRecordRoutes from './routes/serviceRecordRoutes';
 import dashboardRoutes from './routes/dashboardRoutes';
 
@@ -40,6 +41,7 @@ app.get('/api', (req, res) => {
 app.use('/api/admin', checkAdminAccess, adminRouter)
 app.use('/api/clientes', clientRoutes);
 app.use('/api/servicios', serviceRoutes);
+app.use('/api/productos', productRoutes);
 app.use('/api/registros', serviceRecordRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 

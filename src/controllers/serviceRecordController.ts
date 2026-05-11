@@ -68,6 +68,7 @@ export const getClientRecords = async (req: Request, res: Response) => {
 
         const records = await ServiceRecord.find({ client: clientId })
             .populate('service', 'name') // Solo traemos el nombre del servicio
+            .populate('productsUsed.product', 'name')
             .sort({ serviceDate: -1 }); // El más reciente primero (descendente)
 
         return res.status(200).json(records);

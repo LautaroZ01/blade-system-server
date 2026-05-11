@@ -89,3 +89,27 @@ export const deleteProduct = async (req: Request, res: Response) => {
         return res.status(500).json({ error: 'Error al eliminar el producto' });
     }
 };
+
+export const createBulkProducts = async (req: Request, res: Response) => {
+    try {
+        const products = req.body; // Se espera un array de productos
+
+        if (!Array.isArray(products) || products.length === 0) {
+            return res.status(400).json({ error: 'Se esperaba un array de productos' });
+        }
+
+        // InsertMany es mucho más rápido que hacer un .save() dentro de un loop
+        const savedProducts = await Product.insertMany(products);
+
+        return res.status(201).json({
+            message: `${savedProducts.length} productos cargados exitosamente`,
+            products: savedProducts
+        });
+    } catch (error: any) {
+        console.error('Error en carga masiva:', error);
+        return res.status(500).json({
+            error: 'Error al procesar la carga masiva',
+            details: error.message
+        });
+    }
+};

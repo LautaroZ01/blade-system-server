@@ -6,7 +6,8 @@ import {
     getProducts,
     updateProduct,
     adjustStock,
-    deleteProduct
+    deleteProduct,
+    createBulkProducts
 } from '../controllers/productController';
 import { validateRequest } from '../middlewares/validateRequest';
 
@@ -45,5 +46,12 @@ router.delete('/:id', [
     param('id').isMongoId().withMessage('ID inválido'),
     validateRequest
 ], deleteProduct);
+
+router.post('/bulk', [
+    checkAdminAccess,
+    body().isArray().withMessage('Debe ser un array de objetos'),
+    // Podrías agregar validaciones más finas aquí para el contenido del array
+    validateRequest
+], createBulkProducts);
 
 export default router;

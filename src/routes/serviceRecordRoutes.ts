@@ -14,7 +14,7 @@ import { validateRequest } from '../middlewares/validateRequest';
 const router: Router = Router();
 
 // Proteger todas las rutas con el middleware de admin
-// router.use(checkAdminAccess);
+router.use(checkAdminAccess);
 
 // ==========================================
 // Rutas Específicas (Deben ir antes de las dinámicas como /:id)

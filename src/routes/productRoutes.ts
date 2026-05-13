@@ -13,7 +13,7 @@ import { validateRequest } from '../middlewares/validateRequest';
 
 const router: Router = Router();
 
-// router.use(checkAdminAccess);
+router.use(checkAdminAccess);
 
 // CRUD Básico
 router.post('/', [

@@ -8,7 +8,7 @@ export const createServiceRecord = async (req: Request, res: Response) => {
     try {
         const { client, service, serviceDate, notes, productsUsed, nextTouchupDate } = req.body;
 
-        // 1. Lógica de fecha de retoque (la que ya tenías)
+        // 1. Lógica de fecha de retoque
         let finalNextTouchupDate = nextTouchupDate;
         if (!finalNextTouchupDate) {
             const foundService = await Service.findById(service);
@@ -20,7 +20,6 @@ export const createServiceRecord = async (req: Request, res: Response) => {
         }
 
         // 2. LÓGICA DE DESCUENTO DE STOCK
-        // Si el usuario envió productos, los procesamos uno por uno
         if (productsUsed && Array.isArray(productsUsed) && productsUsed.length > 0) {
             for (const item of productsUsed) {
                 const product = await Product.findById(item.product);
@@ -41,15 +40,28 @@ export const createServiceRecord = async (req: Request, res: Response) => {
             }
         }
 
-        // 3. Crear el registro con la nueva estructura de productos
+        // ⭐️ 3. LÓGICA DE AUTO-COMPLETADO DE RETOQUES (NUEVO)
+        // Buscamos si el cliente tenía retoques pendientes para este mismo servicio y los cerramos.
+        await ServiceRecord.updateMany(
+            {
+                client: client,
+                service: service,
+                touchupStatus: 'pending'
+            },
+            {
+                $set: { touchupStatus: 'completed' }
+            }
+        );
+
+        // 4. Crear el registro con la nueva estructura de productos
         const newRecord = new ServiceRecord({
             client,
             service,
             serviceDate,
             notes,
-            productsUsed, // Ahora es un array [{product, quantity}, ...]
+            productsUsed,
             nextTouchupDate: finalNextTouchupDate,
-            touchupStatus: 'pending'
+            touchupStatus: 'pending' // Este nuevo registro nace pendiente para el FUTURO retoque
         });
 
         const savedRecord = await newRecord.save();
